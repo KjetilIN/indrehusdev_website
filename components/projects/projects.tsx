@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import Project from "./project";
 import AnimatedCounter from "./AnimatedCounter";
+import GitHubStats from "./GitHubStats";
+import TechStackCarousel from "./TechStackCarousel";
 
 interface GitHubRepo {
     name: string;
@@ -17,6 +19,9 @@ interface GitHubRepo {
 export default function ProjectsSection() {
     const [projects, setProjects] = useState<GitHubRepo[]>([]);
     const [totalPublicRepos, setTotalPublicRepos] = useState(0);
+    const [totalStars, setTotalStars] = useState(0);
+    const [totalCommits, setTotalCommits] = useState(4950); // Based on GitHub profile badge
+    const [languageStats, setLanguageStats] = useState<{ [key: string]: number }>({});
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -26,9 +31,24 @@ export default function ProjectsSection() {
                 const allReposResponse = await fetch('https://api.github.com/users/KjetilIN/repos?per_page=100');
                 const allRepos = await allReposResponse.json();
 
+                // Filter non-forked repositories
+                const nonForkedRepos = allRepos.filter((repo: GitHubRepo) => !repo.fork);
+
                 // Count non-forked repositories
-                const nonForkedCount = allRepos.filter((repo: GitHubRepo) => !repo.fork).length;
-                setTotalPublicRepos(nonForkedCount);
+                setTotalPublicRepos(nonForkedRepos.length);
+
+                // Calculate total stars from non-forked repos
+                const stars = nonForkedRepos.reduce((sum: number, repo: GitHubRepo) => sum + repo.stargazers_count, 0);
+                setTotalStars(stars);
+
+                // Calculate language statistics
+                const langStats: { [key: string]: number } = {};
+                nonForkedRepos.forEach((repo: GitHubRepo) => {
+                    if (repo.language) {
+                        langStats[repo.language] = (langStats[repo.language] || 0) + 1;
+                    }
+                });
+                setLanguageStats(langStats);
 
                 // Fetch top 6 updated repos for display
                 const response = await fetch('https://api.github.com/users/KjetilIN/repos?sort=updated&per_page=6');
@@ -46,20 +66,28 @@ export default function ProjectsSection() {
 
     return (<section className="bg-transparent mt-40 antialiased w-full">
         <div className="min-w-full px-4 py-8 mx-auto lg:px-6 sm:py-16 lg:py-24">
-            <div className="max-w-3xl mx-auto text-center">
+            <div className="max-w-3xl mx-auto text-center mb-12">
                 <h2 className="text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl">
                     My Projects
                 </h2>
                 <p className="mt-6 text-lg font-normal text-neutral-400 sm:text-xl">
                     {totalPublicRepos > 0 ? (
                         <>
-                            <AnimatedCounter target={totalPublicRepos} /> public projects on GitHub. Showing the most recently updated below.
+                            Building open source projects with <AnimatedCounter target={totalCommits} />+ commits across my repositories.
                         </>
                     ) : (
                         "Loading projects..."
                     )}
                 </p>
             </div>
+
+            <GitHubStats
+                totalRepos={totalPublicRepos}
+                totalStars={totalStars}
+                loading={loading}
+            />
+
+            <TechStackCarousel />
 
             {loading ? (
                 <div className="flex justify-center items-center mt-12 sm:mt-16">
