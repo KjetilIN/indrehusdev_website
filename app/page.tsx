@@ -16,7 +16,7 @@ export default function Home() {
       <div className="relative z-10 w-full flex flex-col items-center">
         {/* Hero Section */}
         <section className="w-full flex flex-col items-center justify-center px-4 min-h-screen">
-          <h1 className="font-mono text-6xl font-bold md:text-8xl text-white tracking-tight">
+          <h1 className="font-mono text-5xl font-bold md:text-8xl text-white tracking-tight">
             {TITLE}
           </h1>
 
