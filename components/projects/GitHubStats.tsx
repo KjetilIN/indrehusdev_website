@@ -48,7 +48,13 @@ export default function GitHubStats({ totalRepos, totalStars, loading }: Props) 
                                 {stat.icon}
                             </div>
                             <div>
-                                <p className="text-3xl font-bold text-white">{stat.value}</p>
+                                <p className="text-3xl font-bold text-white">
+                                    {stat.label === "Total Stars"
+                                        ? "30+"
+                                        : stat.label === "Public Repositories" && stat.value === 0
+                                            ? "40+"
+                                            : stat.value}
+                                </p>
                                 <p className="text-sm text-neutral-400 mt-1">{stat.label}</p>
                             </div>
                         </div>

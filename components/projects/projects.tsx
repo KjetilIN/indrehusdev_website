@@ -76,7 +76,9 @@ export default function ProjectsSection() {
                             Building open source projects with <AnimatedCounter target={totalCommits} />+ commits across my repositories.
                         </>
                     ) : (
-                        "Loading projects..."
+                        <>
+                            Building open source projects with <AnimatedCounter target={totalCommits} />+ commits across my repositories.
+                        </>
                     )}
                 </p>
             </div>
