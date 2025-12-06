@@ -20,6 +20,7 @@ export default function ProjectsSection() {
     const [projects, setProjects] = useState<GitHubRepo[]>([]);
     const [totalPublicRepos, setTotalPublicRepos] = useState(0);
     const [totalStars, setTotalStars] = useState(0);
+    const [totalCommits, setTotalCommits] = useState(4950); // Based on GitHub profile badge
     const [languageStats, setLanguageStats] = useState<{ [key: string]: number }>({});
     const [loading, setLoading] = useState(true);
 
@@ -72,7 +73,7 @@ export default function ProjectsSection() {
                 <p className="mt-6 text-lg font-normal text-neutral-400 sm:text-xl">
                     {totalPublicRepos > 0 ? (
                         <>
-                            <AnimatedCounter target={totalPublicRepos} /> public projects on GitHub. Showing the most recently updated below.
+                            Building open source projects with <AnimatedCounter target={totalCommits} />+ commits across my repositories.
                         </>
                     ) : (
                         "Loading projects..."
