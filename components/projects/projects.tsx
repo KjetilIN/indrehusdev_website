@@ -64,17 +64,29 @@ export default function ProjectsSection() {
                 try {
                     const pinnedRepoPromises = PINNED_REPOS.map(repoName =>
                         fetch(`https://api.github.com/repos/KjetilIN/${repoName}`)
-                            .then(res => res.ok ? res.json() : null)
+                            .then(res => {
+                                if (res.ok) {
+                                    return res.json();
+                                } else {
+                                    console.warn(`Failed to fetch pinned repo ${repoName}: ${res.status} ${res.statusText}`);
+                                    return null;
+                                }
+                            })
+                            .catch(err => {
+                                console.warn(`Error fetching pinned repo ${repoName}:`, err);
+                                return null;
+                            })
                     );
                     const pinnedRepos = await Promise.all(pinnedRepoPromises);
                     const validPinnedRepos = pinnedRepos.filter((repo): repo is GitHubRepo => repo !== null);
 
-                    // If we successfully fetched at least some pinned repos, use them
-                    if (validPinnedRepos.length > 0) {
+                    // If we successfully fetched all pinned repos, use them
+                    // Otherwise fallback to ensure we show 6 projects
+                    if (validPinnedRepos.length === PINNED_REPOS.length) {
                         setProjects(validPinnedRepos);
                     } else {
-                        // Fallback to top 6 updated repos
-                        throw new Error('No pinned repos found');
+                        console.warn(`Only fetched ${validPinnedRepos.length} of ${PINNED_REPOS.length} pinned repos, falling back to top 6`);
+                        throw new Error('Not all pinned repos available');
                     }
                 } catch (pinnedError) {
                     // Fallback: Fetch top 6 updated repos for display
