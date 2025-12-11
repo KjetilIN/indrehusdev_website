@@ -24,6 +24,16 @@ export default function ProjectsSection() {
     const [languageStats, setLanguageStats] = useState<{ [key: string]: number }>({});
     const [loading, setLoading] = useState(true);
 
+    // Hardcoded pinned repositories from GitHub profile
+    const PINNED_REPOS = [
+        'gpt-tui',
+        'simple-ecommerce',
+        'LoLStatTracker',
+        'GoChatCLI',
+        'CryptoHack-Writeup',
+        'WebGLCardGame'
+    ];
+
     useEffect(() => {
         const fetchProjects = async () => {
             try {
@@ -50,10 +60,29 @@ export default function ProjectsSection() {
                 });
                 setLanguageStats(langStats);
 
-                // Fetch top 6 updated repos for display
-                const response = await fetch('https://api.github.com/users/KjetilIN/repos?sort=updated&per_page=6');
-                const data = await response.json();
-                setProjects(data);
+                // Try to fetch specific pinned repos
+                try {
+                    const pinnedRepoPromises = PINNED_REPOS.map(repoName =>
+                        fetch(`https://api.github.com/repos/KjetilIN/${repoName}`)
+                            .then(res => res.ok ? res.json() : null)
+                    );
+                    const pinnedRepos = await Promise.all(pinnedRepoPromises);
+                    const validPinnedRepos = pinnedRepos.filter((repo): repo is GitHubRepo => repo !== null);
+
+                    // If we successfully fetched at least some pinned repos, use them
+                    if (validPinnedRepos.length > 0) {
+                        setProjects(validPinnedRepos);
+                    } else {
+                        // Fallback to top 6 updated repos
+                        throw new Error('No pinned repos found');
+                    }
+                } catch (pinnedError) {
+                    // Fallback: Fetch top 6 updated repos for display
+                    console.warn('Error fetching pinned repos, falling back to top 6:', pinnedError);
+                    const response = await fetch('https://api.github.com/users/KjetilIN/repos?sort=updated&per_page=6');
+                    const data = await response.json();
+                    setProjects(data);
+                }
             } catch (error) {
                 console.error('Error fetching projects:', error);
             } finally {
