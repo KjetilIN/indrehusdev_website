@@ -26,12 +26,12 @@ export default function ProjectsSection() {
 
     // Hardcoded pinned repositories from GitHub profile
     const PINNED_REPOS = [
-        'gpt-tui',
-        'simple-ecommerce',
-        'LoLStatTracker',
-        'GoChatCLI',
-        'CryptoHack-Writeup',
-        'WebGLCardGame'
+        'raycasting',
+        'rs-distributed-stats',
+        'RusticReach',
+        'Renewable-Energy-REST-API',
+        'WarGames',
+        'rs-search-engine'
     ];
 
     useEffect(() => {
@@ -60,40 +60,29 @@ export default function ProjectsSection() {
                 });
                 setLanguageStats(langStats);
 
-                // Try to fetch specific pinned repos
-                try {
-                    const pinnedRepoPromises = PINNED_REPOS.map(repoName =>
-                        fetch(`https://api.github.com/repos/KjetilIN/${repoName}`)
-                            .then(res => {
-                                if (res.ok) {
-                                    return res.json();
-                                } else {
-                                    console.warn(`Failed to fetch pinned repo ${repoName}: ${res.status} ${res.statusText}`);
-                                    return null;
-                                }
-                            })
-                            .catch(err => {
-                                console.warn(`Error fetching pinned repo ${repoName}:`, err);
-                                return null;
-                            })
-                    );
-                    const pinnedRepos = await Promise.all(pinnedRepoPromises);
-                    const validPinnedRepos = pinnedRepos.filter((repo): repo is GitHubRepo => repo !== null);
+                // Filter for pinned repos from the already fetched repos
+                const pinnedRepos = PINNED_REPOS.map(repoName => 
+                    nonForkedRepos.find(repo => repo.name === repoName)
+                ).filter((repo): repo is GitHubRepo => repo !== undefined);
 
-                    // If we successfully fetched all pinned repos, use them
-                    // Otherwise fallback to ensure we show 6 projects
-                    if (validPinnedRepos.length === PINNED_REPOS.length) {
-                        setProjects(validPinnedRepos);
-                    } else {
-                        console.warn(`Only fetched ${validPinnedRepos.length} of ${PINNED_REPOS.length} pinned repos, falling back to top 6`);
-                        throw new Error('Not all pinned repos available');
-                    }
-                } catch (pinnedError) {
-                    // Fallback: Fetch top 6 updated repos for display
-                    console.warn('Error fetching pinned repos, falling back to top 6:', pinnedError);
-                    const response = await fetch('https://api.github.com/users/KjetilIN/repos?sort=updated&per_page=6');
-                    const data = await response.json();
-                    setProjects(data);
+                // If we found all pinned repos, use them
+                if (pinnedRepos.length === PINNED_REPOS.length) {
+                    setProjects(pinnedRepos);
+                } else {
+                    // Fallback: fill missing slots with most recently updated repos
+                    console.warn(`Only found ${pinnedRepos.length} of ${PINNED_REPOS.length} pinned repos, filling with top updated repos`);
+                    
+                    // Get repos sorted by update time
+                    const sortedRepos = [...nonForkedRepos].sort((a, b) => 
+                        new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+                    );
+                    
+                    // Add repos until we have 6, avoiding duplicates
+                    const pinnedRepoNames = new Set(pinnedRepos.map(r => r.name));
+                    const fillerRepos = sortedRepos.filter(repo => !pinnedRepoNames.has(repo.name));
+                    const finalProjects = [...pinnedRepos, ...fillerRepos].slice(0, 6);
+                    
+                    setProjects(finalProjects);
                 }
             } catch (error) {
                 console.error('Error fetching projects:', error);
