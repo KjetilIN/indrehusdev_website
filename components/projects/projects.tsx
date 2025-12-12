@@ -62,7 +62,7 @@ export default function ProjectsSection() {
 
                 // Filter for pinned repos from the already fetched repos
                 const pinnedRepos = PINNED_REPOS.map(repoName => 
-                    nonForkedRepos.find(repo => repo.name === repoName)
+                    nonForkedRepos.find((repo: GitHubRepo) => repo.name === repoName)
                 ).filter((repo): repo is GitHubRepo => repo !== undefined);
 
                 // If we found all pinned repos, use them
