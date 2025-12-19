@@ -1,6 +1,10 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-gradient-dark: #142139;
+  --color-gradient-medium: #035875;
+  --color-gradient-light: #009a93;
+}
 
 :root {
   --foreground-rgb: 255, 255, 255;
