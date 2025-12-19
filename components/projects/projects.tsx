@@ -24,6 +24,16 @@ export default function ProjectsSection() {
     const [languageStats, setLanguageStats] = useState<{ [key: string]: number }>({});
     const [loading, setLoading] = useState(true);
 
+    // Hardcoded pinned repositories from GitHub profile
+    const PINNED_REPOS = [
+        'raycasting',
+        'rs-distributed-stats',
+        'RusticReach',
+        'Renewable-Energy-REST-API',
+        'WarGames',
+        'rs-search-engine'
+    ];
+
     useEffect(() => {
         const fetchProjects = async () => {
             try {
@@ -50,10 +60,30 @@ export default function ProjectsSection() {
                 });
                 setLanguageStats(langStats);
 
-                // Fetch top 6 updated repos for display
-                const response = await fetch('https://api.github.com/users/KjetilIN/repos?sort=updated&per_page=6');
-                const data = await response.json();
-                setProjects(data);
+                // Filter for pinned repos from the already fetched repos
+                const pinnedRepos = PINNED_REPOS.map(repoName => 
+                    nonForkedRepos.find((repo: GitHubRepo) => repo.name === repoName)
+                ).filter((repo): repo is GitHubRepo => repo !== undefined);
+
+                // If we found all pinned repos, use them
+                if (pinnedRepos.length === PINNED_REPOS.length) {
+                    setProjects(pinnedRepos);
+                } else {
+                    // Fallback: fill missing slots with most recently updated repos
+                    console.warn(`Only found ${pinnedRepos.length} of ${PINNED_REPOS.length} pinned repos, filling with top updated repos`);
+                    
+                    // Get repos sorted by update time
+                    const sortedRepos = [...nonForkedRepos].sort((a, b) => 
+                        new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+                    );
+                    
+                    // Add repos until we have 6, avoiding duplicates
+                    const pinnedRepoNames = new Set(pinnedRepos.map(r => r.name));
+                    const fillerRepos = sortedRepos.filter(repo => !pinnedRepoNames.has(repo.name));
+                    const finalProjects = [...pinnedRepos, ...fillerRepos].slice(0, 6);
+                    
+                    setProjects(finalProjects);
+                }
             } catch (error) {
                 console.error('Error fetching projects:', error);
             } finally {
