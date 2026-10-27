@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { formatDate, TRACKS, type PostMeta } from "@/lib/posts";
-import { formatViews } from "@/lib/views";
 import TagList from "./TagList";
+import ViewCount from "./ViewCount";
 
 export default function PostCard({ post, views }: { post: PostMeta; views?: number }) {
     return (
@@ -14,16 +14,16 @@ export default function PostCard({ post, views }: { post: PostMeta; views?: numb
                 >
                     {TRACKS[post.track].label}
                 </span>
+                {views !== undefined && (
+                    <>
+                        <span aria-hidden>·</span>
+                        <ViewCount views={views} />
+                    </>
+                )}
                 <span aria-hidden>·</span>
                 <time dateTime={post.date}>{formatDate(post.date)}</time>
                 <span aria-hidden>·</span>
                 <span>{post.readingTime}</span>
-                {views !== undefined && (
-                    <>
-                        <span aria-hidden>·</span>
-                        <span>{formatViews(views)}</span>
-                    </>
-                )}
                 {post.draft && <span className="text-amber-400">draft</span>}
             </div>
             <h3 className="mt-2 text-lg font-semibold text-neutral-100 transition group-hover:text-accent">

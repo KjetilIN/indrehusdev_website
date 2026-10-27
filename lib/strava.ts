@@ -1,15 +1,29 @@
+import { mockRunningSummary } from "./strava-mock";
+
 const STRAVA_API = "https://www.strava.com/api/v3";
 const RUN_TYPES = new Set(["Run", "TrailRun", "VirtualRun"]);
+export const WEEKS = 12;
 
-export interface LatestRun {
+export interface Run {
     name: string;
     distanceKm: number;
+    movingSeconds: number;
     paceSecondsPerKm: number;
     date: string;
 }
 
+export interface WeekVolume {
+    // Monday of the week, ISO date.
+    weekStart: string;
+    distanceKm: number;
+    runs: number;
+}
+
 export interface RunningSummary {
-    latest: LatestRun | null;
+    latest: Run | null;
+    recent: Run[];
+    weekly: WeekVolume[];
+    longest: Run | null;
     year: number;
     ytd: {
         distanceKm: number;
@@ -60,29 +74,70 @@ async function stravaGet<T>(path: string, token: string): Promise<T> {
     return response.json();
 }
 
+function toRun(activity: StravaActivity): Run {
+    const distanceKm = activity.distance / 1000;
+    return {
+        name: activity.name,
+        distanceKm,
+        movingSeconds: activity.moving_time,
+        paceSecondsPerKm: distanceKm > 0 ? activity.moving_time / distanceKm : 0,
+        date: activity.start_date,
+    };
+}
+
+// Monday 00:00 UTC of the week containing `date`.
+export function weekStart(date: Date) {
+    const monday = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+    monday.setUTCDate(monday.getUTCDate() - ((monday.getUTCDay() + 6) % 7));
+    return monday;
+}
+
+// Buckets runs into the last WEEKS weeks, oldest first, including empty weeks.
+export function weeklyVolume(runs: Run[], now = new Date()): WeekVolume[] {
+    const current = weekStart(now);
+    const weeks: WeekVolume[] = Array.from({ length: WEEKS }, (_, index) => {
+        const start = new Date(current);
+        start.setUTCDate(start.getUTCDate() - (WEEKS - 1 - index) * 7);
+        return { weekStart: start.toISOString().slice(0, 10), distanceKm: 0, runs: 0 };
+    });
+    for (const run of runs) {
+        const week = weeks.find((w) => w.weekStart === weekStart(new Date(run.date)).toISOString().slice(0, 10));
+        if (week) {
+            week.distanceKm += run.distanceKm;
+            week.runs += 1;
+        }
+    }
+    return weeks;
+}
+
+export function longestRun(runs: Run[]) {
+    return runs.reduce<Run | null>((best, run) => (!best || run.distanceKm > best.distanceKm ? run : best), null);
+}
+
 // Distance, pace and date only: no maps or start locations, so nothing reveals where runs begin.
 export async function getRunningSummary(): Promise<RunningSummary | null> {
     try {
         const token = await getAccessToken();
-        if (!token) return null;
+        if (!token) return process.env.MOCK_STATS === "1" ? mockRunningSummary() : null;
 
+        const after = Math.floor(weekStart(new Date()).getTime() / 1000) - (WEEKS - 1) * 7 * 86_400;
         const athlete = await stravaGet<{ id: number }>("/athlete", token);
         const [stats, activities] = await Promise.all([
             stravaGet<{ ytd_run_totals: StravaTotals }>(`/athletes/${athlete.id}/stats`, token),
-            stravaGet<StravaActivity[]>("/athlete/activities?per_page=20", token),
+            stravaGet<StravaActivity[]>(`/athlete/activities?after=${after}&per_page=200`, token),
         ]);
 
-        const run = activities.find((activity) => RUN_TYPES.has(activity.sport_type));
+        // Strava returns activities oldest first when `after` is set.
+        const runs = activities
+            .filter((activity) => RUN_TYPES.has(activity.sport_type))
+            .map(toRun)
+            .sort((a, b) => b.date.localeCompare(a.date));
 
         return {
-            latest: run
-                ? {
-                      name: run.name,
-                      distanceKm: run.distance / 1000,
-                      paceSecondsPerKm: run.distance > 0 ? run.moving_time / (run.distance / 1000) : 0,
-                      date: run.start_date,
-                  }
-                : null,
+            latest: runs[0] ?? null,
+            recent: runs.slice(0, 5),
+            weekly: weeklyVolume(runs),
+            longest: longestRun(runs),
             year: new Date().getFullYear(),
             ytd: {
                 distanceKm: stats.ytd_run_totals.distance / 1000,
@@ -94,6 +149,14 @@ export async function getRunningSummary(): Promise<RunningSummary | null> {
         console.error("Error fetching Strava data:", error);
         return null;
     }
+}
+
+export function formatDuration(seconds: number) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const rest = Math.round(seconds % 60);
+    const mmss = `${minutes.toString().padStart(hours ? 2 : 1, "0")}:${rest.toString().padStart(2, "0")}`;
+    return hours ? `${hours}:${mmss}` : mmss;
 }
 
 export function formatPace(secondsPerKm: number) {

@@ -17,7 +17,7 @@ export default async function ProjectsPage() {
 
     return (
         <main className="mx-auto max-w-5xl px-6 pt-12 pb-12 sm:pt-16">
-            <PageHeader label="02 · Projects" title="Projects">
+            <PageHeader label="03 · Projects" title="Projects">
                 Open source projects, mostly in Rust, Python and TypeScript. Pinned from my GitHub.
             </PageHeader>
 

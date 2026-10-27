@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { getAllPosts } from "./posts";
 import { PLAUSIBLE_DOMAIN } from "./site";
 
 export type PostViews = Record<string, number>;
@@ -10,7 +11,7 @@ interface PlausibleQueryResponse {
 // All-time pageviews per post from the Plausible Stats API, keyed by slug.
 async function fetchPostViews(): Promise<PostViews | null> {
     const apiKey = process.env.PLAUSIBLE_API_KEY;
-    if (!apiKey) return null;
+    if (!apiKey) return process.env.MOCK_STATS === "1" ? mockPostViews() : null;
 
     try {
         const response = await fetch("https://plausible.io/api/v2/query", {
@@ -45,6 +46,24 @@ async function fetchPostViews(): Promise<PostViews | null> {
 
 export const getPostViews = unstable_cache(fetchPostViews, ["post-views"], { revalidate: 3600 });
 
+// Fake but stable counts for local previews (MOCK_STATS=1), never used when a real key is set.
+function mockPostViews(): PostViews {
+    const views: PostViews = {};
+    for (const { slug } of getAllPosts()) {
+        let hash = 0;
+        for (const char of slug) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+        views[slug] = 40 + (hash % 4960);
+    }
+    return views;
+}
+
+const compact = new Intl.NumberFormat("en-US", {
+    notation: "compact",
+    maximumFractionDigits: 1,
+    roundingMode: "ceil",
+});
+
+// Rounded up and short: 87 views, 1.3K views, 12.6K views.
 export function formatViews(count: number) {
-    return `${count.toLocaleString("en-US").replace(/,/g, " ")} ${count === 1 ? "view" : "views"}`;
+    return `${compact.format(count)} ${count === 1 ? "view" : "views"}`;
 }

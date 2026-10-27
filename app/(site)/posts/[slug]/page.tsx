@@ -5,7 +5,8 @@ import TagList from "@/components/posts/TagList";
 import { TocMobile, TocSidebar } from "@/components/posts/TableOfContents";
 import { renderMdx } from "@/lib/mdx";
 import { extractToc, formatDate, getAllPosts, getPost, TRACKS } from "@/lib/posts";
-import { formatViews, getPostViews } from "@/lib/views";
+import ViewCount from "@/components/posts/ViewCount";
+import { getPostViews } from "@/lib/views";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -56,7 +57,7 @@ export default async function PostPage({ params }: Props) {
                         ← All posts
                     </Link>
 
-                    <header className="mt-6 mb-10 border-b-2 border-paper pb-8">
+                    <header className="mt-6 mb-10">
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-muted">
                             <Link
                                 href={`/posts/tracks/${post.track}`}
@@ -64,16 +65,16 @@ export default async function PostPage({ params }: Props) {
                             >
                                 {TRACKS[post.track].label}
                             </Link>
+                            {views !== undefined && (
+                                <>
+                                    <span aria-hidden>·</span>
+                                    <ViewCount views={views} />
+                                </>
+                            )}
                             <span aria-hidden>·</span>
                             <time dateTime={post.date}>{formatDate(post.date)}</time>
                             <span aria-hidden>·</span>
                             <span>{post.readingTime}</span>
-                            {views !== undefined && (
-                                <>
-                                    <span aria-hidden>·</span>
-                                    <span>{formatViews(views)}</span>
-                                </>
-                            )}
                             {post.updated && (
                                 <>
                                     <span aria-hidden>·</span>
@@ -92,6 +93,7 @@ export default async function PostPage({ params }: Props) {
                                 <TagList tags={post.tags} />
                             </div>
                         )}
+                        <span aria-hidden className="mt-8 block h-0.5 w-12 bg-accent" />
                     </header>
 
                     <TocMobile items={toc} />

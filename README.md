@@ -28,11 +28,11 @@ Then update `sources` in `lib/footage.ts`, so every clip is credited with its li
 
 ## Race calendar
 
-The races on the home and About pages live in `lib/races.ts`. Mark a race `done`, `next`, `planned` or `goal`.
+The races on `/endurance` live in `lib/races.ts`. Mark a race `done`, `next`, `planned` or `goal`. The `date` on the `next` race drives the weeks-to-go countdown (on the home page too).
 
 ## Strava stats
 
-The intro shows your latest run and year-to-date running totals from Strava. Without the env vars below, those stats are just hidden.
+`/endurance` shows a training log from Strava: last run, longest run and kilometres per week over the last 12 weeks, recent runs, and year-to-date totals. The home page shows a small version. Without the env vars below, those stats are just hidden.
 
 1. Create an API app at [strava.com/settings/api](https://www.strava.com/settings/api). Set **Authorization Callback Domain** to `localhost`.
 2. Get a refresh token. The script prints an authorize URL; open it, approve, and it prints the env vars:
@@ -53,4 +53,8 @@ To show view counts on posts and the "Most read" list on the home page:
 2. Create a Stats API key: Account settings → API Keys → New API key → Stats API.
 3. Add `PLAUSIBLE_API_KEY` to `.env.local` and in Vercel (Production and Preview).
 
-Counts are all-time pageviews per post, refreshed at most once an hour. Without the key, view counts are hidden and the home page shows the latest posts instead.
+Counts are all-time pageviews per post, rounded up (`1.3K views`), refreshed at most once an hour. Without the key, view counts are hidden and the home page shows the latest posts instead.
+
+## Mock stats for previews
+
+Set `MOCK_STATS=1` in `.env.local` (or on a Vercel Preview) to fill in fake view counts and a fake marathon-build training log while the real keys are missing. Real keys always win over the mock. Never set it for Production.

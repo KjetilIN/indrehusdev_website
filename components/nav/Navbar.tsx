@@ -7,6 +7,7 @@ import { useState, useSyncExternalStore } from "react";
 const NAV_LINKS = [
     { href: "/", label: "Home" },
     { href: "/posts", label: "Posts" },
+    { href: "/endurance", label: "Endurance" },
     { href: "/projects", label: "Projects" },
     { href: "/about", label: "About" },
 ];
@@ -37,8 +38,8 @@ export default function Navbar() {
         >
             <nav className="mx-auto max-w-5xl px-6" aria-label="Main">
                 <div
-                    className={`flex h-16 items-center justify-between border-b-2 transition-colors ${
-                        overlay ? "border-paper/30" : "border-paper"
+                    className={`flex h-16 items-center justify-between border-b transition-colors ${
+                        overlay ? "border-paper/30" : "border-border"
                     }`}
                 >
                 <Link href="/" className="font-archivo text-sm font-black tracking-[0.25em] text-paper uppercase">
@@ -85,7 +86,7 @@ export default function Navbar() {
                 </div>
             </nav>
 
-            <ul id="mobile-menu" hidden={!open} className="border-b-2 border-paper px-6 py-3 sm:hidden">
+            <ul id="mobile-menu" hidden={!open} className="border-b border-border px-6 py-3 sm:hidden">
                 {NAV_LINKS.map((link) => {
                     const active = isActive(pathname, link.href);
                     return (
