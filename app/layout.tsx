@@ -1,10 +1,14 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import Script from 'next/script'
-import { Inter } from 'next/font/google'
+import { Geist, Geist_Mono } from 'next/font/google'
+import Background from '@/components/Background'
+import Footer from '@/components/Footer'
+import Navbar from '@/components/nav/Navbar'
 import { PLAUSIBLE_DOMAIN, SITE_URL } from '@/lib/site'
 
-const inter = Inter({ subsets: ['latin'] })
+const geistSans = Geist({ subsets: ['latin'], variable: '--font-geist-sans' })
+const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' })
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -12,7 +16,11 @@ export const metadata: Metadata = {
     default: 'IndrehusDev </>',
     template: '%s · IndrehusDev',
   },
-  description: 'Portfolio page created by Kjetil Indrehus',
+  description: 'Kjetil Indrehus: software developer and M.Sc. student at UiO. Posts, projects and research.',
+  openGraph: {
+    siteName: 'IndrehusDev',
+    locale: 'en_US',
+  },
 }
 
 // Only count real visits, not local dev or Vercel previews.
@@ -24,9 +32,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        {children}
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className="flex min-h-screen flex-col font-sans antialiased">
+        <Background />
+        <Navbar />
+        <div className="flex-1">{children}</div>
+        <Footer />
         {enableAnalytics && (
           <Script
             defer

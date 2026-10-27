@@ -46,7 +46,7 @@ export default async function PostPage({ params }: Props) {
     const toc = extractToc(post.content);
 
     return (
-        <main className="mx-auto max-w-5xl px-6 pt-28 pb-24">
+        <main className="mx-auto max-w-5xl px-6 pt-12 pb-12 sm:pt-16">
             <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-12">
                 <article className="min-w-0">
                     <Link href="/posts" className="font-mono text-sm text-muted transition hover:text-accent">

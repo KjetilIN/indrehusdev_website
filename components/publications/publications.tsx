@@ -1,8 +1,6 @@
-"use client"
-
 import Publication from "./publication";
 
-export default function PublicationsSection() {
+export default function Publications() {
     const publications = [
         {
             title: "SemQA: Evaluating Evidence with Question Embeddings and Answer Entailment for Fact Verification",
@@ -39,50 +37,10 @@ export default function PublicationsSection() {
     ];
 
     return (
-        <section className="bg-transparent mt-20 antialiased w-full mb-20">
-            <div className="min-w-full px-4 py-8 mx-auto lg:px-6 sm:py-16 lg:py-24">
-                <div className="max-w-3xl mx-auto text-center mb-16">
-                    <h2 className="text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl">
-                        Publications
-                    </h2>
-                    <p className="mt-6 text-lg font-normal text-neutral-400 sm:text-xl">
-                        Research contributions in artificial intelligence and natural language processing.
-                    </p>
-
-                    {/* Google Scholar Link */}
-                    <div className="mt-6">
-                        <a
-                            href="https://scholar.google.com/citations?user=YOUR_ID"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 text-neutral-300 hover:text-white transition-colors duration-200 font-mono text-sm"
-                        >
-                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 24a7 7 0 110-14 7 7 0 010 14zm0-24L0 9.5l4.838 3.94A8 8 0 0112 9a8 8 0 017.162 4.44L24 9.5z"/>
-                            </svg>
-                            View Google Scholar Profile
-                        </a>
-                    </div>
-                </div>
-
-                <div className="max-w-4xl mx-auto space-y-8">
-                    {publications.map((publication, index) => (
-                        <Publication
-                            key={index}
-                            title={publication.title}
-                            authors={publication.authors}
-                            venue={publication.venue}
-                            year={publication.year}
-                            abstract={publication.abstract}
-                            pdfLink={publication.pdfLink}
-                            doiLink={publication.doiLink}
-                            codeLink={publication.codeLink}
-                            conferenceLocation={publication.conferenceLocation}
-                            type={publication.type}
-                        />
-                    ))}
-                </div>
-            </div>
-        </section>
+        <div className="space-y-4">
+            {publications.map((publication) => (
+                <Publication key={publication.title} {...publication} />
+            ))}
+        </div>
     );
 }

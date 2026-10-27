@@ -1,145 +1,21 @@
-"use client"
-
-import { useEffect, useState } from "react";
+import type { Repo } from "@/lib/github";
 import Project from "./project";
-import AnimatedCounter from "./AnimatedCounter";
-import GitHubStats from "./GitHubStats";
-import TechStackCarousel from "./TechStackCarousel";
 
-interface GitHubRepo {
-    name: string;
-    description: string;
-    html_url: string;
-    language: string;
-    stargazers_count: number;
-    updated_at: string;
-    fork: boolean;
-}
+export default function ProjectGrid({ repos }: { repos: Repo[] }) {
+    if (repos.length === 0) {
+        return (
+            <p className="text-muted">
+                Couldn&apos;t load projects right now. See them on{" "}
+                <a href="https://github.com/KjetilIN" className="text-accent hover:underline">GitHub</a>.
+            </p>
+        );
+    }
 
-export default function ProjectsSection() {
-    const [projects, setProjects] = useState<GitHubRepo[]>([]);
-    const [totalPublicRepos, setTotalPublicRepos] = useState(0);
-    const [totalStars, setTotalStars] = useState(0);
-    const [totalCommits, setTotalCommits] = useState(4950); // Based on GitHub profile badge
-    const [languageStats, setLanguageStats] = useState<{ [key: string]: number }>({});
-    const [loading, setLoading] = useState(true);
-
-    // Hardcoded pinned repositories from GitHub profile
-    const PINNED_REPOS = [
-        'raycasting',
-        'rs-distributed-stats',
-        'RusticReach',
-        'Renewable-Energy-REST-API',
-        'WarGames',
-        'rs-search-engine'
-    ];
-
-    useEffect(() => {
-        const fetchProjects = async () => {
-            try {
-                // Fetch all repos to count non-forked ones
-                const allReposResponse = await fetch('https://api.github.com/users/KjetilIN/repos?per_page=100');
-                const allRepos = await allReposResponse.json();
-
-                // Filter non-forked repositories
-                const nonForkedRepos = allRepos.filter((repo: GitHubRepo) => !repo.fork);
-
-                // Count non-forked repositories
-                setTotalPublicRepos(nonForkedRepos.length);
-
-                // Calculate total stars from non-forked repos
-                const stars = nonForkedRepos.reduce((sum: number, repo: GitHubRepo) => sum + repo.stargazers_count, 0);
-                setTotalStars(stars);
-
-                // Calculate language statistics
-                const langStats: { [key: string]: number } = {};
-                nonForkedRepos.forEach((repo: GitHubRepo) => {
-                    if (repo.language) {
-                        langStats[repo.language] = (langStats[repo.language] || 0) + 1;
-                    }
-                });
-                setLanguageStats(langStats);
-
-                // Filter for pinned repos from the already fetched repos
-                const pinnedRepos = PINNED_REPOS.map(repoName => 
-                    nonForkedRepos.find((repo: GitHubRepo) => repo.name === repoName)
-                ).filter((repo): repo is GitHubRepo => repo !== undefined);
-
-                // If we found all pinned repos, use them
-                if (pinnedRepos.length === PINNED_REPOS.length) {
-                    setProjects(pinnedRepos);
-                } else {
-                    // Fallback: fill missing slots with most recently updated repos
-                    console.warn(`Only found ${pinnedRepos.length} of ${PINNED_REPOS.length} pinned repos, filling with top updated repos`);
-                    
-                    // Get repos sorted by update time
-                    const sortedRepos = [...nonForkedRepos].sort((a, b) => 
-                        new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-                    );
-                    
-                    // Add repos until we have 6, avoiding duplicates
-                    const pinnedRepoNames = new Set(pinnedRepos.map(r => r.name));
-                    const fillerRepos = sortedRepos.filter(repo => !pinnedRepoNames.has(repo.name));
-                    const finalProjects = [...pinnedRepos, ...fillerRepos].slice(0, 6);
-                    
-                    setProjects(finalProjects);
-                }
-            } catch (error) {
-                console.error('Error fetching projects:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchProjects();
-    }, []);
-
-    return (<section className="bg-transparent mt-40 antialiased w-full">
-        <div className="min-w-full px-4 py-8 mx-auto lg:px-6 sm:py-16 lg:py-24">
-            <div className="max-w-3xl mx-auto text-center mb-12">
-                <h2 className="text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl">
-                    My Projects
-                </h2>
-                <p className="mt-6 text-lg font-normal text-neutral-400 sm:text-xl">
-                    {totalPublicRepos > 0 ? (
-                        <>
-                            Building open source projects with <AnimatedCounter target={totalCommits} />+ commits across my repositories.
-                        </>
-                    ) : (
-                        <>
-                            Building open source projects with <AnimatedCounter target={totalCommits} />+ commits across my repositories.
-                        </>
-                    )}
-                </p>
-            </div>
-
-            <GitHubStats
-                totalRepos={totalPublicRepos}
-                totalStars={totalStars}
-                loading={loading}
-            />
-
-            <TechStackCarousel />
-
-            {loading ? (
-                <div className="flex justify-center items-center mt-12 sm:mt-16">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 mt-12 text-left sm:mt-16 gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
-                    {projects.map((project) => (
-                        <Project
-                            key={project.name}
-                            company="GitHub"
-                            description={project.description || "No description available"}
-                            link={project.html_url}
-                            projectTitle={project.name.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                            language={project.language}
-                            stars={project.stargazers_count}
-                        />
-                    ))}
-                </div>
-            )}
+    return (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {repos.map((repo) => (
+                <Project key={repo.name} repo={repo} />
+            ))}
         </div>
-    </section>);
+    );
 }
