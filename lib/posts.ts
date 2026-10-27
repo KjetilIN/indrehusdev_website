@@ -6,6 +6,24 @@ import GithubSlugger, { slug } from "github-slugger";
 
 const POSTS_DIR = path.join(process.cwd(), "content", "posts");
 
+// The two kinds of writing, matching the Work and Endurance sides of the home page.
+export const TRACKS = {
+    code: {
+        label: "Code",
+        blurb: "Engineering, research and things I build: what worked, what broke and why.",
+    },
+    endurance: {
+        label: "Endurance",
+        blurb: "Race reports and training notes on the way from half marathons to an Ironman 70.3.",
+    },
+} as const;
+
+export type Track = keyof typeof TRACKS;
+
+export function isTrack(value: unknown): value is Track {
+    return typeof value === "string" && value in TRACKS;
+}
+
 export interface PostMeta {
     slug: string;
     title: string;
@@ -13,6 +31,7 @@ export interface PostMeta {
     date: string;
     updated?: string;
     tags: string[];
+    track: Track;
     draft: boolean;
     readingTime: string;
 }
@@ -38,6 +57,7 @@ function readPost(fileName: string): Post {
         date: new Date(data.date).toISOString(),
         updated: data.updated ? new Date(data.updated).toISOString() : undefined,
         tags: data.tags ?? [],
+        track: isTrack(data.track) ? data.track : "code",
         draft: data.draft === true,
         readingTime: readingTime(content).text,
         content,
@@ -68,9 +88,9 @@ export function tagSlug(tag: string) {
     return slug(tag);
 }
 
-export function getAllTags(): { tag: string; slug: string; count: number }[] {
+export function getAllTags(posts: PostMeta[] = getAllPosts()): { tag: string; slug: string; count: number }[] {
     const counts = new Map<string, number>();
-    for (const post of getAllPosts()) {
+    for (const post of posts) {
         for (const tag of post.tags) {
             counts.set(tag, (counts.get(tag) ?? 0) + 1);
         }
@@ -79,6 +99,10 @@ export function getAllTags(): { tag: string; slug: string; count: number }[] {
     return [...counts.entries()]
         .map(([tag, count]) => ({ tag, slug: tagSlug(tag), count }))
         .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
+}
+
+export function getPostsByTrack(track: Track): Post[] {
+    return getAllPosts().filter((post) => post.track === track);
 }
 
 export function getPostsByTag(slugToMatch: string): Post[] {

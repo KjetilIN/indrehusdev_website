@@ -2,7 +2,7 @@ import type { Repo } from "@/lib/github";
 
 export default function Project({ repo }: { repo: Repo }) {
     return (
-        <article className="group relative flex flex-col rounded-xl border border-border bg-surface/60 p-6 transition hover:-translate-y-0.5 hover:border-accent/40">
+        <article className="group relative flex flex-col border border-border bg-surface/60 p-6 transition hover:-translate-y-0.5 hover:border-accent/40">
             <div className="flex items-center justify-between gap-3 font-mono text-xs text-muted">
                 <span>{repo.language ?? "Code"}</span>
                 {repo.stars > 0 && (

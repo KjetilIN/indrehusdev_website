@@ -33,9 +33,9 @@ function PublicationLink({ href, label }: { href: string; label: string }) {
 
 export default function Publication({ title, authors, venue, year, abstract, pdfLink, doiLink, codeLink, conferenceLocation, type }: Props) {
     return (
-        <article className="rounded-xl border border-border bg-surface/60 p-6 transition hover:border-accent/30">
+        <article className="border border-border bg-surface/60 p-6 transition hover:border-accent/30">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs">
-                <span className="rounded-full border border-accent/30 bg-accent/10 px-2.5 py-0.5 text-accent">
+                <span className="rounded-sm border border-accent/30 bg-accent/10 px-2.5 py-0.5 text-accent">
                     {typeLabels[type]}
                 </span>
                 <span className="text-muted">{year}</span>

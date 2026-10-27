@@ -2,12 +2,14 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --color-bg: #0a0a0f;
-  --color-surface: #111117;
-  --color-border: #23232b;
-  --color-muted: #8b8b96;
-  --color-accent: #2dd4bf;
-  --color-accent-strong: #009a93;
+  /* Dark editorial: warm black paper, cream type, race-orange accent */
+  --color-bg: #0f0e0c;
+  --color-surface: #1a1815;
+  --color-border: #2f2b26;
+  --color-muted: #9b958a;
+  --color-paper: #f1ede4;
+  --color-accent: #ff5a26;
+  --color-accent-strong: #ff4f1f;
 
   --animate-marquee: marquee 40s linear infinite;
 
@@ -20,10 +22,11 @@
 @theme inline {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  --font-archivo: var(--font-archivo-face), "Helvetica Neue", Arial, sans-serif;
 }
 
 body {
-  color: #ededf0;
+  color: var(--color-paper);
   background: var(--color-bg);
   min-height: 100vh;
 }
@@ -56,6 +59,12 @@ html {
   --tw-prose-td-borders: var(--color-border);
   --tw-prose-bullets: var(--color-muted);
   --tw-prose-counters: var(--color-muted);
+}
+
+.prose :where(h2, h3) {
+  font-family: var(--font-archivo);
+  font-weight: 800;
+  letter-spacing: -0.01em;
 }
 
 .prose :where(h2, h3) a {

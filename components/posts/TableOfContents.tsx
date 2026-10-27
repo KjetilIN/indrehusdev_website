@@ -18,7 +18,7 @@ export function TocSidebar({ items }: { items: TocItem[] }) {
     if (items.length === 0) return null;
     return (
         <nav aria-label="Table of contents" className="sticky top-24">
-            <p className="mb-3 font-mono text-xs uppercase tracking-wider text-neutral-500">On this page</p>
+            <p className="mb-3 border-t-2 border-paper pt-3 text-xs font-extrabold tracking-[0.25em] text-accent uppercase">On this page</p>
             <TocLinks items={items} />
         </nav>
     );

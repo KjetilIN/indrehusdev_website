@@ -11,10 +11,10 @@ export default function GitHubStats({ totalRepos, totalStars }: { totalRepos: nu
     ];
 
     return (
-        <dl className="grid grid-cols-3 divide-x divide-border rounded-xl border border-border bg-surface/60">
+        <dl className="grid grid-cols-3 divide-x divide-border border border-border bg-surface/60">
             {stats.map((stat) => (
                 <div key={stat.label} className="px-4 py-5 text-center sm:px-6">
-                    <dd className="font-mono text-2xl font-semibold text-neutral-50 sm:text-3xl">
+                    <dd className="font-archivo text-3xl font-black text-paper sm:text-4xl">
                         <AnimatedCounter target={stat.value} />
                         {stat.suffix}
                     </dd>

@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 const NAV_LINKS = [
     { href: "/", label: "Home" },
     { href: "/posts", label: "Posts" },
+    { href: "/endurance", label: "Endurance" },
     { href: "/projects", label: "Projects" },
     { href: "/about", label: "About" },
 ];
@@ -15,18 +16,37 @@ function isActive(pathname: string, href: string) {
     return href === "/" ? pathname === "/" : pathname.startsWith(href);
 }
 
+function subscribeToScroll(onChange: () => void) {
+    window.addEventListener("scroll", onChange, { passive: true });
+    return () => window.removeEventListener("scroll", onChange);
+}
+
 export default function Navbar() {
     const pathname = usePathname();
     const [open, setOpen] = useState(false);
+    const scrolled = useSyncExternalStore(subscribeToScroll, () => window.scrollY > 40, () => false);
+
+    // On the home page the nav floats over the hero video until you scroll.
+    const home = pathname === "/";
+    const overlay = home && !scrolled && !open;
 
     return (
-        <header className="sticky top-0 z-50 border-b border-border/60 bg-bg/70 backdrop-blur-md">
-            <nav className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6" aria-label="Main">
-                <Link href="/" className="font-mono text-base font-semibold text-neutral-100">
-                    IndrehusDev <span className="text-accent">&lt;/&gt;</span>
+        <header
+            className={`top-0 z-50 transition-colors duration-300 ${home ? "fixed inset-x-0" : "sticky"} ${
+                overlay ? "bg-transparent" : "bg-bg/85 backdrop-blur-md"
+            }`}
+        >
+            <nav className="mx-auto max-w-5xl px-6" aria-label="Main">
+                <div
+                    className={`flex h-16 items-center justify-between border-b transition-colors ${
+                        overlay ? "border-paper/30" : "border-border"
+                    }`}
+                >
+                <Link href="/" className="font-archivo text-sm font-black tracking-[0.25em] text-paper uppercase">
+                    Indrehus<span className="text-accent">.</span>
                 </Link>
 
-                <ul className="hidden items-center gap-1 sm:flex">
+                <ul className="hidden items-center gap-6 sm:flex">
                     {NAV_LINKS.map((link) => {
                         const active = isActive(pathname, link.href);
                         return (
@@ -34,10 +54,10 @@ export default function Navbar() {
                                 <Link
                                     href={link.href}
                                     aria-current={active ? "page" : undefined}
-                                    className={`rounded-md px-3 py-1.5 text-sm transition ${
+                                    className={`border-b-2 py-1 text-xs font-extrabold tracking-[0.25em] uppercase transition ${
                                         active
-                                            ? "bg-surface text-accent"
-                                            : "text-neutral-400 hover:text-neutral-100"
+                                            ? "border-accent text-accent"
+                                            : "border-transparent text-neutral-400 hover:text-paper"
                                     }`}
                                 >
                                     {link.label}
@@ -63,9 +83,10 @@ export default function Navbar() {
                         )}
                     </svg>
                 </button>
+                </div>
             </nav>
 
-            <ul id="mobile-menu" hidden={!open} className="border-t border-border/60 px-6 py-3 sm:hidden">
+            <ul id="mobile-menu" hidden={!open} className="border-b border-border px-6 py-3 sm:hidden">
                 {NAV_LINKS.map((link) => {
                     const active = isActive(pathname, link.href);
                     return (
@@ -74,7 +95,7 @@ export default function Navbar() {
                                 href={link.href}
                                 aria-current={active ? "page" : undefined}
                                 onClick={() => setOpen(false)}
-                                className={`block py-2.5 font-mono text-sm ${active ? "text-accent" : "text-neutral-300"}`}
+                                className={`block py-3 font-archivo text-2xl font-black uppercase ${active ? "text-accent" : "text-paper"}`}
                             >
                                 {link.label}
                             </Link>

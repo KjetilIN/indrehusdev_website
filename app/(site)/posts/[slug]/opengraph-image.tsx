@@ -23,25 +23,28 @@ export default async function OpengraphImage({ params }: { params: Promise<{ slu
                     flexDirection: "column",
                     justifyContent: "space-between",
                     padding: 72,
-                    background: "radial-gradient(circle at 85% 0%, #0f3b3a 0%, #0a0a0f 55%)",
-                    color: "#f4f4f6",
-                    fontFamily: "monospace",
+                    background: "#0f0e0c",
+                    color: "#f1ede4",
+                    fontFamily: "sans-serif",
                 }}
             >
-                <div style={{ display: "flex", fontSize: 30, color: "#2dd4bf" }}>IndrehusDev &lt;/&gt;</div>
+                <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "4px solid #f1ede4", paddingBottom: 16, fontSize: 26, fontWeight: 800, letterSpacing: 6 }}>
+                    <div style={{ display: "flex" }}>INDREHUS<span style={{ color: "#ff5a26" }}>.</span></div>
+                    <div style={{ display: "flex", color: "#ff5a26" }}>POSTS</div>
+                </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-                    <div style={{ display: "flex", fontSize: 64, fontWeight: 700, lineHeight: 1.15 }}>
+                    <div style={{ display: "flex", fontSize: 72, fontWeight: 800, lineHeight: 1.05, letterSpacing: -2 }}>
                         {post?.title ?? "Post"}
                     </div>
                     {post && post.tags.length > 0 && (
-                        <div style={{ display: "flex", gap: 16, fontSize: 26, color: "#8b8b96" }}>
+                        <div style={{ display: "flex", gap: 16, fontSize: 26, color: "#9b958a" }}>
                             {post.tags.slice(0, 4).map((tag) => (
                                 <div key={tag} style={{ display: "flex" }}>#{tag}</div>
                             ))}
                         </div>
                     )}
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 24, color: "#8b8b96" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 24, color: "#9b958a" }}>
                     <div style={{ display: "flex" }}>Kjetil Indrehus</div>
                     {post && <div style={{ display: "flex" }}>{formatDate(post.date)} · {post.readingTime}</div>}
                 </div>
