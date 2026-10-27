@@ -1,0 +1,94 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import TagList from "@/components/posts/TagList";
+import { TocMobile, TocSidebar } from "@/components/posts/TableOfContents";
+import { renderMdx } from "@/lib/mdx";
+import { extractToc, formatDate, getAllPosts, getPost } from "@/lib/posts";
+
+type Props = { params: Promise<{ slug: string }> };
+
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+    return getAllPosts().map((post) => ({ slug: post.slug }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const { slug } = await params;
+    const post = getPost(slug);
+    if (!post) return {};
+
+    return {
+        title: post.title,
+        description: post.description,
+        keywords: post.tags,
+        alternates: { canonical: `/posts/${post.slug}` },
+        openGraph: {
+            type: "article",
+            title: post.title,
+            description: post.description,
+            publishedTime: post.date,
+            modifiedTime: post.updated,
+            tags: post.tags,
+            url: `/posts/${post.slug}`,
+        },
+        twitter: { card: "summary_large_image", title: post.title, description: post.description },
+    };
+}
+
+export default async function PostPage({ params }: Props) {
+    const { slug } = await params;
+    const post = getPost(slug);
+    if (!post) notFound();
+
+    const content = await renderMdx(post.content);
+    const toc = extractToc(post.content);
+
+    return (
+        <main className="mx-auto max-w-5xl px-6 pt-28 pb-24">
+            <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-12">
+                <article className="min-w-0">
+                    <Link href="/posts" className="font-mono text-sm text-muted transition hover:text-accent">
+                        ← All posts
+                    </Link>
+
+                    <header className="mt-6 mb-10 border-b border-border pb-8">
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-muted">
+                            <time dateTime={post.date}>{formatDate(post.date)}</time>
+                            <span aria-hidden>·</span>
+                            <span>{post.readingTime}</span>
+                            {post.updated && (
+                                <>
+                                    <span aria-hidden>·</span>
+                                    <span>updated {formatDate(post.updated)}</span>
+                                </>
+                            )}
+                        </div>
+                        <h1 className="mt-3 text-3xl font-bold tracking-tight text-neutral-50 sm:text-4xl">
+                            {post.title}
+                        </h1>
+                        {post.description && (
+                            <p className="mt-4 text-lg text-neutral-400">{post.description}</p>
+                        )}
+                        {post.tags.length > 0 && (
+                            <div className="mt-5">
+                                <TagList tags={post.tags} />
+                            </div>
+                        )}
+                    </header>
+
+                    <TocMobile items={toc} />
+
+                    <div className="prose prose-invert max-w-none prose-headings:scroll-mt-24 prose-a:no-underline hover:prose-a:underline">
+                        {content}
+                    </div>
+                </article>
+
+                <aside className="hidden lg:block">
+                    <TocSidebar items={toc} />
+                </aside>
+            </div>
+        </main>
+    );
+}

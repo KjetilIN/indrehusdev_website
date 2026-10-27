@@ -1,0 +1,46 @@
+---
+title: "Hello, world"
+description: "A first post, and a quick tour of how posts on this site are written."
+date: 2026-10-27
+tags: [meta, nextjs]
+---
+
+Welcome to the new blog! This post doubles as a reference for how posts are written.
+
+## Writing a post
+
+Create a file in `content/posts/` named after the URL you want, e.g. `my-post.mdx` becomes `/posts/my-post`. Start it with frontmatter:
+
+```yaml
+---
+title: "My post"
+description: "One sentence shown in lists and link previews."
+date: 2026-10-27
+tags: [rust, databases]
+draft: true # optional: hidden in production, visible in `npm run dev`
+---
+```
+
+### Code blocks
+
+Code is highlighted at build time. Highlight lines with `{n}`:
+
+```ts {2}
+export function greet(name: string) {
+    return `Hello, ${name}!`;
+}
+```
+
+## Callouts
+
+<Callout>
+  MDX means you can drop in components like this callout.
+</Callout>
+
+<Callout type="warning">
+  Remove `draft: true` before you push, or the post won't show up.
+</Callout>
+
+## Publishing
+
+Commit and push. Vercel builds the site and the post goes live with its own social preview image.
