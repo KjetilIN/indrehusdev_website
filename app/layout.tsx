@@ -1,15 +1,13 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import Script from 'next/script'
-import { Anton, Archivo, Geist, Geist_Mono, VT323 } from 'next/font/google'
+import { Archivo, Geist, Geist_Mono } from 'next/font/google'
 import { PLAUSIBLE_DOMAIN, SITE_URL } from '@/lib/site'
 
 const geistSans = Geist({ subsets: ['latin'], variable: '--font-geist-sans' })
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' })
 
-// Display faces for the intro looks; the unused ones are dropped once a look is picked.
-const anton = Anton({ subsets: ['latin'], weight: '400', variable: '--font-anton-face' })
-const vt323 = VT323({ subsets: ['latin'], weight: '400', variable: '--font-vt323-face' })
+// Display face for the intro and headings.
 const archivo = Archivo({ subsets: ['latin'], weight: ['400', '800', '900'], variable: '--font-archivo-face' })
 
 export const metadata: Metadata = {
@@ -36,7 +34,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${anton.variable} ${vt323.variable} ${archivo.variable}`}
+      className={`${geistSans.variable} ${geistMono.variable} ${archivo.variable}`}
     >
       <body className="font-sans antialiased">
         {children}

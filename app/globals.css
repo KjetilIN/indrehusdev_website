@@ -20,49 +20,7 @@
 @theme inline {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
-  --font-anton: var(--font-anton-face), Impact, "Arial Narrow", sans-serif;
-  --font-vt323: var(--font-vt323-face), ui-monospace, monospace;
   --font-archivo: var(--font-archivo-face), "Helvetica Neue", Arial, sans-serif;
-}
-
-/* Intro looks */
-@theme {
-  --animate-gate-weave: gate-weave 0.4s steps(2) infinite;
-  --animate-light-leak: light-leak 9s ease-in-out infinite alternate;
-  --animate-vhs-tracking: vhs-tracking 7s linear infinite;
-  --animate-blink: blink 1s steps(1) infinite;
-  --animate-grain: grain 0.5s steps(4) infinite;
-
-  @keyframes gate-weave {
-    0% { transform: translate(0, 0); }
-    50% { transform: translate(0.6px, -0.8px); }
-  }
-  @keyframes light-leak {
-    from { opacity: 0.35; transform: translate(0, 0) scale(1); }
-    to { opacity: 0.75; transform: translate(-6%, 4%) scale(1.1); }
-  }
-  @keyframes vhs-tracking {
-    from { top: -10%; }
-    to { top: 110%; }
-  }
-  @keyframes blink {
-    50% { opacity: 0; }
-  }
-  @keyframes grain {
-    0% { transform: translate(0, 0); }
-    25% { transform: translate(-5%, 3%); }
-    50% { transform: translate(4%, -6%); }
-    75% { transform: translate(-3%, -2%); }
-  }
-}
-
-.film-grain {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation: var(--animate-grain);
-}
-
-.vhs-text {
-  text-shadow: 2px 0 rgba(255, 0, 80, 0.65), -2px 0 rgba(0, 220, 255, 0.65), 0 0 12px rgba(255, 255, 255, 0.35);
 }
 
 body {
@@ -80,11 +38,7 @@ html {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-marquee,
-  .animate-gate-weave,
-  .animate-light-leak,
-  .animate-vhs-tracking,
-  .film-grain {
+  .animate-marquee {
     animation: none;
   }
 }

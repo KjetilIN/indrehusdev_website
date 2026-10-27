@@ -13,10 +13,12 @@ export default function IntroVideo({
     const videoRef = useRef<HTMLVideoElement>(null);
     const [playing, setPlaying] = useState(false);
 
-    // Only start playback when the visitor hasn't asked for reduced motion; the poster stays otherwise.
+    // Autoplay unless the visitor asked for reduced motion; then the poster shows with a play button.
+    // React doesn't reliably set `muted` on server-rendered video, and browsers block unmuted autoplay.
     useEffect(() => {
         const video = videoRef.current;
         if (!video) return;
+        video.muted = true;
         if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
             video.play().catch(() => {});
         }
@@ -25,6 +27,7 @@ export default function IntroVideo({
     function toggle() {
         const video = videoRef.current;
         if (!video) return;
+        video.muted = true;
         if (video.paused) video.play().catch(() => {});
         else video.pause();
     }
@@ -38,7 +41,7 @@ export default function IntroVideo({
                 muted
                 loop
                 playsInline
-                preload="auto"
+                preload="metadata"
                 aria-hidden
                 onPlay={() => setPlaying(true)}
                 onPause={() => setPlaying(false)}
@@ -49,10 +52,10 @@ export default function IntroVideo({
             <button
                 type="button"
                 onClick={toggle}
-                aria-label={playing ? "Pause background video" : "Play background video"}
+                aria-label={playing ? "Pause video" : "Play video"}
                 className={`absolute z-30 ${controlClassName}`}
             >
-                {playing ? "❚❚" : "▶"}
+                {playing ? "❚❚" : "▶ Play video"}
             </button>
         </>
     );
