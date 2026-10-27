@@ -20,10 +20,11 @@ Add an `.mdx` file to `content/posts/`. See `content/posts/hello-world.mdx` for 
 The home page plays a looping background video from `public/video/`. To swap it:
 
 ```bash
-scripts/encode-intro-video.sh path/to/clip.mp4 <start-seconds> <duration-seconds>
+# One or more file:start:duration segments, joined with crossfades
+scripts/encode-intro-video.sh marathon.webm:12:6 swim.webm:3:5
 ```
 
-Then update the credit and license in `lib/footage.ts`.
+Then update `sources` in `lib/footage.ts`, so every clip is credited with its license.
 
 ## Strava stats
 
