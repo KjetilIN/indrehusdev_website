@@ -1,22 +1,24 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import Script from 'next/script'
-import { Geist, Geist_Mono } from 'next/font/google'
-import Background from '@/components/Background'
-import Footer from '@/components/Footer'
-import Navbar from '@/components/nav/Navbar'
+import { Anton, Archivo, Geist, Geist_Mono, VT323 } from 'next/font/google'
 import { PLAUSIBLE_DOMAIN, SITE_URL } from '@/lib/site'
 
 const geistSans = Geist({ subsets: ['latin'], variable: '--font-geist-sans' })
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' })
 
+// Display faces for the intro looks; the unused ones are dropped once a look is picked.
+const anton = Anton({ subsets: ['latin'], weight: '400', variable: '--font-anton-face' })
+const vt323 = VT323({ subsets: ['latin'], weight: '400', variable: '--font-vt323-face' })
+const archivo = Archivo({ subsets: ['latin'], weight: ['400', '800', '900'], variable: '--font-archivo-face' })
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'IndrehusDev </>',
+    default: 'Kjetil Indrehus',
     template: '%s · IndrehusDev',
   },
-  description: 'Kjetil Indrehus: software developer and M.Sc. student at UiO. Posts, projects and research.',
+  description: 'Kjetil Indrehus: software developer at Bekk and long-distance runner. Posts, projects and research.',
   openGraph: {
     siteName: 'IndrehusDev',
     locale: 'en_US',
@@ -32,12 +34,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="flex min-h-screen flex-col font-sans antialiased">
-        <Background />
-        <Navbar />
-        <div className="flex-1">{children}</div>
-        <Footer />
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} ${anton.variable} ${vt323.variable} ${archivo.variable}`}
+    >
+      <body className="font-sans antialiased">
+        {children}
         {enableAnalytics && (
           <Script
             defer

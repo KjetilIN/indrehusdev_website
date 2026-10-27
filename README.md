@@ -1,36 +1,43 @@
 # IndrehusDev </>
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Personal site of Kjetil Indrehus, built with [Next.js](https://nextjs.org/) and deployed on Vercel.
 
-## Getting Started
-
-First, run the development server:
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Writing posts
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Add an `.mdx` file to `content/posts/`. See `content/posts/hello-world.mdx` for the frontmatter and what's supported. Posts with `draft: true` show up in `npm run dev` but not in production.
 
-## Learn More
+## Intro video
 
-To learn more about Next.js, take a look at the following resources:
+The home page plays a looping background video from `public/video/`. To swap it:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+scripts/encode-intro-video.sh path/to/clip.mp4 <start-seconds> <duration-seconds>
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Then update the credit and license in `lib/footage.ts`.
 
-## Deploy on Vercel
+## Strava stats
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The intro shows your latest run and year-to-date running totals from Strava. Without the env vars below, those stats are just hidden.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+1. Create an API app at [strava.com/settings/api](https://www.strava.com/settings/api). Set **Authorization Callback Domain** to `localhost`.
+2. Get a refresh token. The script prints an authorize URL; open it, approve, and it prints the env vars:
+   ```bash
+   STRAVA_CLIENT_ID=... STRAVA_CLIENT_SECRET=... node scripts/strava-auth.mjs
+   ```
+3. Put `STRAVA_CLIENT_ID`, `STRAVA_CLIENT_SECRET` and `STRAVA_REFRESH_TOKEN` in `.env.local`. Add them in Vercel too, under Project → Settings → Environment Variables, for Production and Preview.
+
+The app only requests `read,activity:read`, so private activities stay private. It only shows distance, pace and dates, never maps. Data is refreshed at most once an hour. If the stats disappear later, Strava may have rotated the refresh token, so rerun step 2.
+
+## Analytics
+
+Page views are tracked with [Plausible](https://plausible.io). The script loads only in production, through the `/stats` proxy in `next.config.js`.
