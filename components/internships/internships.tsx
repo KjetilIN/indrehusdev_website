@@ -1,8 +1,6 @@
-"use client"
-
 import Internship from "./internship";
 
-export default function InternshipsSection() {
+export default function Internships() {
     const internships = [
         {
             company: "Bekk Consulting AS",
@@ -28,31 +26,14 @@ export default function InternshipsSection() {
     ];
 
     return (
-        <section className="bg-transparent mt-20 antialiased w-full mb-20">
-            <div className="min-w-full px-4 py-8 mx-auto lg:px-6 sm:py-16 lg:py-24">
-                <div className="max-w-3xl mx-auto text-center mb-16">
-                    <h2 className="text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl">
-                        Internship Experience
-                    </h2>
-                    <p className="mt-6 text-lg font-normal text-neutral-400 sm:text-xl">
-                        Professional experience gained through internships in software development and IT.
-                    </p>
-                </div>
-
-                <div className="max-w-3xl mx-auto">
-                    {internships.map((internship, index) => (
-                        <Internship
-                            key={index}
-                            company={internship.company}
-                            role={internship.role}
-                            period={internship.period}
-                            description={internship.description}
-                            technologies={internship.technologies}
-                            isLast={index === internships.length - 1}
-                        />
-                    ))}
-                </div>
-            </div>
-        </section>
+        <ol>
+            {internships.map((internship, index) => (
+                <Internship
+                    key={`${internship.company}-${internship.period}`}
+                    {...internship}
+                    isLast={index === internships.length - 1}
+                />
+            ))}
+        </ol>
     );
 }

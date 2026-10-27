@@ -36,5 +36,5 @@ export default function AnimatedCounter({ target, duration = 2000 }: AnimatedCou
         requestAnimationFrame(updateCounter);
     }, [target, duration]);
 
-    return <span className="font-bold text-white">{count}</span>;
+    return <span className="tabular-nums">{count}</span>;
 }
