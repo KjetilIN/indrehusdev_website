@@ -15,15 +15,13 @@ export default function IntroVideo({
     const videoRef = useRef<HTMLVideoElement>(null);
     const [playing, setPlaying] = useState(false);
 
-    // Autoplay unless the visitor asked for reduced motion; then the poster shows with a play button.
+    // Always autoplay; the pause button covers anyone who wants it still.
     // React doesn't reliably set `muted` on server-rendered video, and browsers block unmuted autoplay.
     useEffect(() => {
         const video = videoRef.current;
         if (!video) return;
         video.muted = true;
-        if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-            video.play().catch(() => {});
-        }
+        video.play().catch(() => {});
     }, []);
 
     function toggle() {
@@ -40,17 +38,20 @@ export default function IntroVideo({
                 ref={videoRef}
                 className={`absolute inset-0 h-full w-full object-cover ${className}`}
                 poster={FOOTAGE.poster}
+                autoPlay
                 muted
                 loop
                 playsInline
-                preload="metadata"
+                preload="auto"
                 aria-hidden
                 onPlay={() => setPlaying(true)}
                 onPause={() => setPlaying(false)}
                 onTimeUpdate={(event) => onTimeUpdate?.(event.currentTarget.currentTime)}
             >
-                <source src={FOOTAGE.webm} type="video/webm" />
-                <source src={FOOTAGE.mp4} type="video/mp4" />
+                {FOOTAGE.renditions.flatMap((rendition) => [
+                    <source key={rendition.webm} src={rendition.webm} type="video/webm" media={rendition.media} />,
+                    <source key={rendition.mp4} src={rendition.mp4} type="video/mp4" media={rendition.media} />,
+                ])}
             </video>
             <button
                 type="button"

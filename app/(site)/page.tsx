@@ -5,13 +5,13 @@ import WorkSide from "@/components/home/WorkSide";
 import { formatStrava } from "@/components/home/strava-format";
 import { getAllPosts } from "@/lib/posts";
 import { getRunningSummary } from "@/lib/strava";
+import { getPostViews } from "@/lib/views";
 
-// Strava numbers are refreshed at most once an hour.
+// Strava numbers and view counts are refreshed at most once an hour.
 export const revalidate = 3600;
 
 export default async function Home() {
-  const posts = getAllPosts().slice(0, 2);
-  const summary = await getRunningSummary();
+  const [summary, views] = await Promise.all([getRunningSummary(), getPostViews()]);
 
   return (
     <main>
@@ -19,7 +19,7 @@ export default async function Home() {
       <div className="mx-auto max-w-5xl px-6">
         <Credits className="mt-3" />
         <div className="mt-16 grid gap-16 lg:grid-cols-2 lg:gap-12">
-          <WorkSide posts={posts} />
+          <WorkSide posts={getAllPosts()} views={views} />
           <EnduranceSide strava={summary ? formatStrava(summary) : null} />
         </div>
       </div>

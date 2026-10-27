@@ -1,8 +1,11 @@
 // Background footage for the home page hero. Swap the files in public/video and update the
 // sources and chapters to change it.
 export const FOOTAGE = {
-    mp4: "/video/intro.mp4",
-    webm: "/video/intro.webm",
+    // 1080p for tablets and up, 720p for phones.
+    renditions: [
+        { media: "(min-width: 768px)", webm: "/video/intro-1080.webm", mp4: "/video/intro-1080.mp4" },
+        { media: undefined, webm: "/video/intro-720.webm", mp4: "/video/intro-720.mp4" },
+    ],
     poster: "/video/intro-poster.jpg",
     // Time ranges in the montage, each tied to a step in the race calendar (lib/races.ts).
     chapters: [

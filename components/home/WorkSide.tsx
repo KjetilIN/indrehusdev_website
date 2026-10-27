@@ -1,7 +1,7 @@
 import Link from "next/link";
 import SectionHeading from "@/components/SectionHeading";
-import PostCard from "@/components/posts/PostCard";
-import type { PostMeta } from "@/lib/posts";
+import { formatDate, TRACKS, type PostMeta } from "@/lib/posts";
+import { formatViews, type PostViews } from "@/lib/views";
 
 const LINKS = [
     { href: "/posts", label: "Posts" },
@@ -9,7 +9,18 @@ const LINKS = [
     { href: "/about", label: "About" },
 ];
 
-export default function WorkSide({ posts }: { posts: PostMeta[] }) {
+// Most read when view counts exist, otherwise the latest posts.
+function pickPosts(posts: PostMeta[], views: PostViews | null) {
+    const hasViews = !!views && posts.some((post) => (views[post.slug] ?? 0) > 0);
+    if (!hasViews) return { title: "Latest writing", picked: posts.slice(0, 3), ranked: false };
+
+    const picked = [...posts].sort((a, b) => (views[b.slug] ?? 0) - (views[a.slug] ?? 0)).slice(0, 3);
+    return { title: "Most read", picked, ranked: true };
+}
+
+export default function WorkSide({ posts, views }: { posts: PostMeta[]; views: PostViews | null }) {
+    const { title, picked, ranked } = pickPosts(posts, views);
+
     return (
         <section>
             <SectionHeading eyebrow="01 · Work" title="Code" />
@@ -22,14 +33,29 @@ export default function WorkSide({ posts }: { posts: PostMeta[] }) {
                 <span className="font-mono text-xs text-muted">Aug 2026 – present</span>
             </div>
 
-            {posts.length > 0 && (
+            {picked.length > 0 && (
                 <div className="mt-8">
-                    <p className="mb-3 text-xs font-extrabold tracking-[0.25em] text-muted uppercase">Latest writing</p>
-                    <div className="grid gap-4">
-                        {posts.map((post) => (
-                            <PostCard key={post.slug} post={post} />
+                    <p className="mb-3 text-xs font-extrabold tracking-[0.25em] text-muted uppercase">{title}</p>
+                    <ol className="border-y border-border">
+                        {picked.map((post, index) => (
+                            <li key={post.slug} className="border-t border-border first:border-t-0">
+                                <Link href={`/posts/${post.slug}`} className="group flex gap-4 py-3">
+                                    <span className="pt-1 font-mono text-xs text-accent">
+                                        {ranked ? String(index + 1).padStart(2, "0") : "—"}
+                                    </span>
+                                    <span className="flex-1">
+                                        <span className="block font-medium text-paper transition group-hover:text-accent">
+                                            {post.title}
+                                        </span>
+                                        <span className="mt-1 block font-mono text-xs text-muted">
+                                            {TRACKS[post.track].label} ·{" "}
+                                            {ranked ? formatViews(views?.[post.slug] ?? 0) : formatDate(post.date)}
+                                        </span>
+                                    </span>
+                                </Link>
+                            </li>
                         ))}
-                    </div>
+                    </ol>
                 </div>
             )}
 

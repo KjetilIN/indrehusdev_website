@@ -13,7 +13,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Writing posts
 
-Add an `.mdx` file to `content/posts/`. See `content/posts/hello-world.mdx` for the frontmatter and what's supported. Posts with `draft: true` show up in `npm run dev` but not in production.
+Add an `.mdx` file to `content/posts/`. Set `track: code` or `track: endurance` in the frontmatter to file it under Code or Endurance. See `content/posts/hello-world.mdx` for the frontmatter and what's supported. Posts with `draft: true` show up in `npm run dev` but not in production.
 
 ## Intro video
 
@@ -43,6 +43,14 @@ The intro shows your latest run and year-to-date running totals from Strava. Wit
 
 The app only requests `read,activity:read`, so private activities stay private. It only shows distance, pace and dates, never maps. Data is refreshed at most once an hour. If the stats disappear later, Strava may have rotated the refresh token, so rerun step 2.
 
-## Analytics
+## Analytics and view counts
 
 Page views are tracked with [Plausible](https://plausible.io). The script loads only in production, through the `/stats` proxy in `next.config.js`.
+
+To show view counts on posts and the "Most read" list on the home page:
+
+1. Add the site `indrehusdev.no` at [plausible.io](https://plausible.io).
+2. Create a Stats API key: Account settings → API Keys → New API key → Stats API.
+3. Add `PLAUSIBLE_API_KEY` to `.env.local` and in Vercel (Production and Preview).
+
+Counts are all-time pageviews per post, refreshed at most once an hour. Without the key, view counts are hidden and the home page shows the latest posts instead.

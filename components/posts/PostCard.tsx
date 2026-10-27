@@ -1,14 +1,29 @@
 import Link from "next/link";
-import { formatDate, type PostMeta } from "@/lib/posts";
+import { formatDate, TRACKS, type PostMeta } from "@/lib/posts";
+import { formatViews } from "@/lib/views";
 import TagList from "./TagList";
 
-export default function PostCard({ post }: { post: PostMeta }) {
+export default function PostCard({ post, views }: { post: PostMeta; views?: number }) {
     return (
         <article className="group relative border border-border bg-surface/60 p-5 transition hover:-translate-y-0.5 hover:border-accent/40">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-muted">
+                <span
+                    className={`font-sans text-[10px] font-bold tracking-[0.25em] uppercase ${
+                        post.track === "endurance" ? "text-accent" : "text-paper/70"
+                    }`}
+                >
+                    {TRACKS[post.track].label}
+                </span>
+                <span aria-hidden>·</span>
                 <time dateTime={post.date}>{formatDate(post.date)}</time>
                 <span aria-hidden>·</span>
                 <span>{post.readingTime}</span>
+                {views !== undefined && (
+                    <>
+                        <span aria-hidden>·</span>
+                        <span>{formatViews(views)}</span>
+                    </>
+                )}
                 {post.draft && <span className="text-amber-400">draft</span>}
             </div>
             <h3 className="mt-2 text-lg font-semibold text-neutral-100 transition group-hover:text-accent">

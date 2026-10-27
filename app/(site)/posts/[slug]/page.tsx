@@ -4,11 +4,13 @@ import { notFound } from "next/navigation";
 import TagList from "@/components/posts/TagList";
 import { TocMobile, TocSidebar } from "@/components/posts/TableOfContents";
 import { renderMdx } from "@/lib/mdx";
-import { extractToc, formatDate, getAllPosts, getPost } from "@/lib/posts";
+import { extractToc, formatDate, getAllPosts, getPost, TRACKS } from "@/lib/posts";
+import { formatViews, getPostViews } from "@/lib/views";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export const dynamicParams = false;
+export const revalidate = 3600;
 
 export function generateStaticParams() {
     return getAllPosts().map((post) => ({ slug: post.slug }));
@@ -44,6 +46,7 @@ export default async function PostPage({ params }: Props) {
 
     const content = await renderMdx(post.content);
     const toc = extractToc(post.content);
+    const views = (await getPostViews())?.[post.slug];
 
     return (
         <main className="mx-auto max-w-5xl px-6 pt-12 pb-12 sm:pt-16">
@@ -55,9 +58,22 @@ export default async function PostPage({ params }: Props) {
 
                     <header className="mt-6 mb-10 border-b-2 border-paper pb-8">
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-muted">
+                            <Link
+                                href={`/posts/tracks/${post.track}`}
+                                className="font-sans text-[10px] font-bold tracking-[0.25em] text-accent uppercase hover:underline"
+                            >
+                                {TRACKS[post.track].label}
+                            </Link>
+                            <span aria-hidden>·</span>
                             <time dateTime={post.date}>{formatDate(post.date)}</time>
                             <span aria-hidden>·</span>
                             <span>{post.readingTime}</span>
+                            {views !== undefined && (
+                                <>
+                                    <span aria-hidden>·</span>
+                                    <span>{formatViews(views)}</span>
+                                </>
+                            )}
                             {post.updated && (
                                 <>
                                     <span aria-hidden>·</span>
