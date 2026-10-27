@@ -1,7 +1,5 @@
 "use client"
 
-import Image from "next/image";
-
 interface TechItem {
     name: string;
     logo: string; // URL to logo from a CDN
