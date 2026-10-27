@@ -24,7 +24,11 @@ The home page plays a looping background video from `public/video/`. To swap it:
 scripts/encode-intro-video.sh marathon.webm:12:6 swim.webm:3:5
 ```
 
-Then update `sources` in `lib/footage.ts`, so every clip is credited with its license.
+Then update `sources` in `lib/footage.ts`, so every clip is credited with its license, and the `chapters` time ranges that drive the hero caption.
+
+## Race calendar
+
+The races on the home and About pages live in `lib/races.ts`. Mark a race `done`, `next`, `planned` or `goal`.
 
 ## Strava stats
 

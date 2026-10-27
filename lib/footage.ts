@@ -1,9 +1,14 @@
-// Background footage for the intro. Swap the files in public/video and update the sources to change it.
+// Background footage for the home page hero. Swap the files in public/video and update the
+// sources and chapters to change it.
 export const FOOTAGE = {
     mp4: "/video/intro.mp4",
     webm: "/video/intro.webm",
     poster: "/video/intro-poster.jpg",
-    caption: "Run · Swim",
+    // Time ranges in the montage, each tied to a step in the race calendar (lib/races.ts).
+    chapters: [
+        { until: 5.7, label: "Now", text: "Marathon build · Manchester, Apr 2027" },
+        { until: Infinity, label: "Next", text: "Ironman 70.3 · 2028" },
+    ],
     sources: [
         {
             title: "London Marathon 2026",
@@ -25,9 +30,3 @@ export const FOOTAGE = {
         })),
     ],
 };
-
-export const INTRO_LINKS = [
-    { href: "/posts", label: "Posts" },
-    { href: "/projects", label: "Projects" },
-    { href: "/about", label: "About" },
-];

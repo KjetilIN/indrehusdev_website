@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/PageHeader";
+import RaceCalendar from "@/components/RaceCalendar";
 import SectionHeading from "@/components/SectionHeading";
 import SocialLinks from "@/components/SocialLinks";
 import Internships from "@/components/internships/internships";
@@ -27,12 +28,13 @@ const education = [
 export default function AboutPage() {
     return (
         <main className="mx-auto max-w-3xl px-6 pt-12 pb-12 sm:pt-16">
-            <PageHeader label="Split 03" title="About">
+            <PageHeader label="03 · About" title="About">
                 <p className="leading-relaxed">
                 I&apos;m Kjetil, a software developer from Norway, working full time at Bekk since August 2026.
                 I finished my M.Sc. in Informatics: Programming and System Architecture at UiO in June 2026,
                 after a B.Sc. in Computer Engineering from NTNU Gjøvik. I enjoy systems programming,
-                distributed systems and applied NLP, and I spend most of my free time running.
+                distributed systems and applied NLP. Outside work I train: a few half marathons done,
+                the Manchester and Oslo marathons in 2027, and an Ironman 70.3 in 2028.
                 </p>
                 <div className="mt-6">
                     <SocialLinks />
@@ -48,6 +50,11 @@ export default function AboutPage() {
                     </div>
                     <span className="font-mono text-xs text-muted">Aug 2026 – present</span>
                 </div>
+            </section>
+
+            <section className="mb-16">
+                <SectionHeading eyebrow="Endurance" title="Race calendar" />
+                <RaceCalendar />
             </section>
 
             <section className="mb-16">

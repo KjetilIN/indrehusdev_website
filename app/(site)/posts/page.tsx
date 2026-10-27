@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function PostsPage() {
     return (
         <main className="mx-auto max-w-3xl px-6 pt-12 pb-12 sm:pt-16">
-            <PageHeader label="Split 01" title="Posts">
+            <PageHeader label="01 · Posts" title="Posts">
                 Writing on software, research and things I&apos;m learning.
             </PageHeader>
             <PostList posts={getAllPosts()} />

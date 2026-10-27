@@ -6,9 +6,11 @@ import { FOOTAGE } from "@/lib/footage";
 export default function IntroVideo({
     className = "",
     controlClassName = "",
+    onTimeUpdate,
 }: {
     className?: string;
     controlClassName?: string;
+    onTimeUpdate?: (seconds: number) => void;
 }) {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [playing, setPlaying] = useState(false);
@@ -45,6 +47,7 @@ export default function IntroVideo({
                 aria-hidden
                 onPlay={() => setPlaying(true)}
                 onPause={() => setPlaying(false)}
+                onTimeUpdate={(event) => onTimeUpdate?.(event.currentTarget.currentTime)}
             >
                 <source src={FOOTAGE.webm} type="video/webm" />
                 <source src={FOOTAGE.mp4} type="video/mp4" />
@@ -55,7 +58,7 @@ export default function IntroVideo({
                 aria-label={playing ? "Pause video" : "Play video"}
                 className={`absolute z-30 ${controlClassName}`}
             >
-                {playing ? "❚❚" : "▶ Play video"}
+                {playing ? "❚❚ Pause" : "▶ Play video"}
             </button>
         </>
     );

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 const NAV_LINKS = [
     { href: "/", label: "Home" },
@@ -15,13 +15,32 @@ function isActive(pathname: string, href: string) {
     return href === "/" ? pathname === "/" : pathname.startsWith(href);
 }
 
+function subscribeToScroll(onChange: () => void) {
+    window.addEventListener("scroll", onChange, { passive: true });
+    return () => window.removeEventListener("scroll", onChange);
+}
+
 export default function Navbar() {
     const pathname = usePathname();
     const [open, setOpen] = useState(false);
+    const scrolled = useSyncExternalStore(subscribeToScroll, () => window.scrollY > 40, () => false);
+
+    // On the home page the nav floats over the hero video until you scroll.
+    const home = pathname === "/";
+    const overlay = home && !scrolled && !open;
 
     return (
-        <header className="sticky top-0 z-50 bg-bg/85 backdrop-blur-md">
-            <nav className="mx-auto flex h-16 max-w-5xl items-center justify-between border-b-2 border-paper px-6 sm:mx-6 sm:px-0 lg:mx-auto" aria-label="Main">
+        <header
+            className={`top-0 z-50 transition-colors duration-300 ${home ? "fixed inset-x-0" : "sticky"} ${
+                overlay ? "bg-transparent" : "bg-bg/85 backdrop-blur-md"
+            }`}
+        >
+            <nav className="mx-auto max-w-5xl px-6" aria-label="Main">
+                <div
+                    className={`flex h-16 items-center justify-between border-b-2 transition-colors ${
+                        overlay ? "border-paper/30" : "border-paper"
+                    }`}
+                >
                 <Link href="/" className="font-archivo text-sm font-black tracking-[0.25em] text-paper uppercase">
                     Indrehus<span className="text-accent">.</span>
                 </Link>
@@ -63,6 +82,7 @@ export default function Navbar() {
                         )}
                     </svg>
                 </button>
+                </div>
             </nav>
 
             <ul id="mobile-menu" hidden={!open} className="border-b-2 border-paper px-6 py-3 sm:hidden">
