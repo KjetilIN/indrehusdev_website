@@ -53,7 +53,7 @@ export default async function PostPage({ params }: Props) {
                         ← All posts
                     </Link>
 
-                    <header className="mt-6 mb-10 border-b border-border pb-8">
+                    <header className="mt-6 mb-10 border-b-2 border-paper pb-8">
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-muted">
                             <time dateTime={post.date}>{formatDate(post.date)}</time>
                             <span aria-hidden>·</span>
@@ -65,7 +65,7 @@ export default async function PostPage({ params }: Props) {
                                 </>
                             )}
                         </div>
-                        <h1 className="mt-3 text-3xl font-bold tracking-tight text-neutral-50 sm:text-4xl">
+                        <h1 className="mt-3 font-archivo text-4xl leading-[0.95] font-black tracking-[-0.03em] text-paper sm:text-5xl">
                             {post.title}
                         </h1>
                         {post.description && (

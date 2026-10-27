@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import PageHeader from "@/components/PageHeader";
 import PostList from "@/components/posts/PostList";
 import { getAllTags, getPostsByTag } from "@/lib/posts";
 
@@ -28,15 +29,17 @@ export default async function TagPage({ params }: Props) {
 
     return (
         <main className="mx-auto max-w-3xl px-6 pt-12 pb-12 sm:pt-16">
-            <header className="mb-10">
-                <h1 className="font-mono text-3xl font-bold text-neutral-100">
-                    <span className="text-accent">#</span>
-                    {entry.tag}
-                </h1>
-                <p className="mt-3 text-neutral-400">
-                    {entry.count} {entry.count === 1 ? "post" : "posts"} tagged {entry.tag}.
-                </p>
-            </header>
+            <PageHeader
+                label="Posts · Tag"
+                title={
+                    <>
+                        <span className="text-accent">#</span>
+                        {entry.tag}
+                    </>
+                }
+            >
+                {entry.count} {entry.count === 1 ? "post" : "posts"} tagged {entry.tag}.
+            </PageHeader>
             <PostList posts={getPostsByTag(tag)} activeTag={tag} />
         </main>
     );

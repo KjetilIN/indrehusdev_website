@@ -20,13 +20,13 @@ export default function Navbar() {
     const [open, setOpen] = useState(false);
 
     return (
-        <header className="sticky top-0 z-50 border-b border-border/60 bg-bg/70 backdrop-blur-md">
-            <nav className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6" aria-label="Main">
-                <Link href="/" className="font-mono text-base font-semibold text-neutral-100">
-                    IndrehusDev <span className="text-accent">&lt;/&gt;</span>
+        <header className="sticky top-0 z-50 bg-bg/85 backdrop-blur-md">
+            <nav className="mx-auto flex h-16 max-w-5xl items-center justify-between border-b-2 border-paper px-6 sm:mx-6 sm:px-0 lg:mx-auto" aria-label="Main">
+                <Link href="/" className="font-archivo text-sm font-black tracking-[0.25em] text-paper uppercase">
+                    Indrehus<span className="text-accent">.</span>
                 </Link>
 
-                <ul className="hidden items-center gap-1 sm:flex">
+                <ul className="hidden items-center gap-6 sm:flex">
                     {NAV_LINKS.map((link) => {
                         const active = isActive(pathname, link.href);
                         return (
@@ -34,10 +34,10 @@ export default function Navbar() {
                                 <Link
                                     href={link.href}
                                     aria-current={active ? "page" : undefined}
-                                    className={`rounded-md px-3 py-1.5 text-sm transition ${
+                                    className={`border-b-2 py-1 text-xs font-extrabold tracking-[0.25em] uppercase transition ${
                                         active
-                                            ? "bg-surface text-accent"
-                                            : "text-neutral-400 hover:text-neutral-100"
+                                            ? "border-accent text-accent"
+                                            : "border-transparent text-neutral-400 hover:text-paper"
                                     }`}
                                 >
                                     {link.label}
@@ -65,7 +65,7 @@ export default function Navbar() {
                 </button>
             </nav>
 
-            <ul id="mobile-menu" hidden={!open} className="border-t border-border/60 px-6 py-3 sm:hidden">
+            <ul id="mobile-menu" hidden={!open} className="border-b-2 border-paper px-6 py-3 sm:hidden">
                 {NAV_LINKS.map((link) => {
                     const active = isActive(pathname, link.href);
                     return (
@@ -74,7 +74,7 @@ export default function Navbar() {
                                 href={link.href}
                                 aria-current={active ? "page" : undefined}
                                 onClick={() => setOpen(false)}
-                                className={`block py-2.5 font-mono text-sm ${active ? "text-accent" : "text-neutral-300"}`}
+                                className={`block py-3 font-archivo text-2xl font-black uppercase ${active ? "text-accent" : "text-paper"}`}
                             >
                                 {link.label}
                             </Link>

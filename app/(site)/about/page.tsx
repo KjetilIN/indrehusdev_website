@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import PageHeader from "@/components/PageHeader";
 import SectionHeading from "@/components/SectionHeading";
 import SocialLinks from "@/components/SocialLinks";
 import Internships from "@/components/internships/internships";
@@ -26,22 +27,21 @@ const education = [
 export default function AboutPage() {
     return (
         <main className="mx-auto max-w-3xl px-6 pt-12 pb-12 sm:pt-16">
-            <header className="mb-16">
-                <h1 className="font-mono text-3xl font-bold text-neutral-100">About</h1>
-                <p className="mt-4 text-lg leading-relaxed text-neutral-400">
-                    I&apos;m Kjetil, a software developer from Norway, working full time at Bekk since August 2026.
-                    I finished my M.Sc. in Informatics: Programming and System Architecture at UiO in June 2026,
-                    after a B.Sc. in Computer Engineering from NTNU Gjøvik. I enjoy systems programming,
-                    distributed systems and applied NLP, and I spend most of my free time running.
+            <PageHeader label="Split 03" title="About">
+                <p className="leading-relaxed">
+                I&apos;m Kjetil, a software developer from Norway, working full time at Bekk since August 2026.
+                I finished my M.Sc. in Informatics: Programming and System Architecture at UiO in June 2026,
+                after a B.Sc. in Computer Engineering from NTNU Gjøvik. I enjoy systems programming,
+                distributed systems and applied NLP, and I spend most of my free time running.
                 </p>
                 <div className="mt-6">
                     <SocialLinks />
                 </div>
-            </header>
+            </PageHeader>
 
             <section className="mb-16">
                 <SectionHeading eyebrow="Work" title="Now" />
-                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 rounded-xl border border-border bg-surface/60 px-5 py-4">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border border-border bg-surface/60 px-5 py-4">
                     <div>
                         <p className="font-medium text-neutral-100">Software Developer</p>
                         <p className="text-sm text-muted">Bekk Consulting AS · Full time</p>
@@ -52,7 +52,7 @@ export default function AboutPage() {
 
             <section className="mb-16">
                 <SectionHeading eyebrow="Education" title="Studies" />
-                <ul className="divide-y divide-border rounded-xl border border-border bg-surface/60">
+                <ul className="divide-y divide-border border border-border bg-surface/60">
                     {education.map((item) => (
                         <li key={item.degree} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-5 py-4">
                             <div>

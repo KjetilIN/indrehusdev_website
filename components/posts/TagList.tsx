@@ -16,7 +16,7 @@ export function TagChip({
         <Link
             href={href}
             aria-current={active ? "page" : undefined}
-            className={`rounded-full border px-2.5 py-0.5 font-mono text-xs transition ${
+            className={`rounded-sm border px-2 py-0.5 font-mono text-xs transition ${
                 active
                     ? "border-accent/60 bg-accent/10 text-accent"
                     : "border-border text-muted hover:border-accent/40 hover:text-neutral-200"

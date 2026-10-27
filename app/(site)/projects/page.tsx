@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import PageHeader from "@/components/PageHeader";
 import SectionHeading from "@/components/SectionHeading";
 import GitHubStats from "@/components/projects/GitHubStats";
 import ProjectGrid from "@/components/projects/projects";
@@ -16,12 +17,9 @@ export default async function ProjectsPage() {
 
     return (
         <main className="mx-auto max-w-5xl px-6 pt-12 pb-12 sm:pt-16">
-            <header className="mb-10">
-                <h1 className="font-mono text-3xl font-bold text-neutral-100">Projects</h1>
-                <p className="mt-3 max-w-2xl text-neutral-400">
-                    Open source projects, mostly in Rust, Python and TypeScript. Pinned from my GitHub.
-                </p>
-            </header>
+            <PageHeader label="Split 02" title="Projects">
+                Open source projects, mostly in Rust, Python and TypeScript. Pinned from my GitHub.
+            </PageHeader>
 
             {github && (
                 <div className="mb-12">
